@@ -1,16 +1,20 @@
 use ws::{CloseCode, Sender, Handler, Message, Result, Handshake};
 
-#[derive(Debug, Clone)]
+use state::State;
+
+#[derive(Clone)]
 pub struct Socket {
-    nick: String,
-    out: Sender,
+    pub nick: String,
+    pub out: Sender,
+    state: State,
 }
 
 impl Socket {
-    pub fn new(nick: &str, out: Sender) -> Socket {
+    pub fn new(nick: String, out: Sender, state: State) -> Socket {
         Socket {
-            nick: String::from(nick),
+            nick: nick,
             out: out,
+            state: state,
         }
     }
 }
@@ -23,6 +27,27 @@ impl Handler for Socket {
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
         println!("{}: got '{}'. ", self.nick, msg);
+
+        if let Ok(sockets) = self.state.sockets.read() {
+            // for (nick, sock) in &sockets {
+            //     let sock = sock.lock().unwrap();
+            //     sock.out.send(msg.clone());
+            // }
+            match sockets.get("anon1") {
+                Some(sock) => {
+                    let sock = sock.lock().unwrap();
+                    let _ = sock.out.send(msg.clone());
+                },
+                None => ()
+            };
+            match sockets.get("anon2") {
+                Some(sock) => {
+                    let sock = sock.lock().unwrap();
+                    let _ = sock.out.send(msg.clone());
+                },
+                None => ()
+            };
+        };
 
         self.out.send(msg)
     }

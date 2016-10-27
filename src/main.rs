@@ -13,18 +13,20 @@ use socket::Socket;
 
 fn main() {
 
-    // let mut state = Arc::new(Mutex::new(State::new()));
-    let mut state = State::new();
+    let state = State::new();
 
     let server = thread::spawn(move || {
-        let mut i = 0;
-
         listen("127.0.0.1:10000", |out| {
 
-            // let mut state = state.lock().unwrap();
+            let mut state = state.clone();
 
-            state.new_socket(out)
+            let new_nick = state.generate_nick();
 
+            let sock = Socket::new(new_nick.clone(), out, state.clone());
+
+            state.add_socket(new_nick.clone(), Arc::new(Mutex::new(sock.clone())));
+
+            sock
         }).unwrap();
     });
 

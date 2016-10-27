@@ -1,13 +1,12 @@
 use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc, RwLock, Mutex};
 use std::sync::atomic::{AtomicUsize, Ordering};
-
-use ws::Sender;
 
 use socket::Socket;
 
+#[derive(Clone)]
 pub struct State {
-    sockets: Arc<RwLock<HashMap<String, Socket>>>,
+    pub sockets: Arc<RwLock<HashMap<String, Arc<Mutex<Socket>>>>>,
     token_counter: Arc<AtomicUsize>,
 }
 
@@ -19,19 +18,11 @@ impl State {
         }
     }
 
-    pub fn new_socket(&mut self, out: Sender) -> Socket {
-        let token = self.token_counter.fetch_add(1, Ordering::SeqCst);
-        let nick = generate_nick(token);
-
-        let sock = Socket::new(&nick, out);
-
+    pub fn add_socket(&mut self, nick: String, sock: Arc<Mutex<Socket>>) {
         if let Ok(ref mut sockets) = self.sockets.write() {
             println!("adding socket '{}'", nick);
-            sockets.insert(nick.clone(), sock.clone());
+            sockets.insert(String::from(nick), sock);
         }
-
-        // self.get_socket(&nick)
-        sock
     }
 
     // pub fn get_socket(&self, nick: &str) -> Option<&Socket> {
@@ -41,8 +32,9 @@ impl State {
     //         None
     //     }
     // }
-}
 
-fn generate_nick(tok: usize) -> String {
-    format!("anon{}", tok)
+    pub fn generate_nick(&self) -> String {
+        let token = self.token_counter.fetch_add(1, Ordering::SeqCst);
+        format!("anon{}", token)
+    }
 }
