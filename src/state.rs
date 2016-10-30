@@ -2,9 +2,10 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock, Mutex};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use ws::{Message, Sender, Result, Error, ErrorKind};
+use ws::{Message, Sender, Result};
 
 use socket::Socket;
+use error::{self, Error};
 
 #[derive(Clone)]
 pub struct State {
@@ -49,8 +50,7 @@ impl State {
             }
 
         } else {
-            // TODO: custom error
-            Err(Error::new(ErrorKind::Internal, "could not read sockets"))
+            Err(error::new_boxed(Error::Internal("could not read sockets".to_string())))
         }
     }
 
@@ -61,13 +61,10 @@ impl State {
                     let sock = sock.lock().unwrap();
                     sock.out.send(msg)
                 },
-                None => Err(Error::new(ErrorKind::Internal, // TODO: custom error
-                                       format!("socket '{}' not found", to)))
+                None => Err(error::new_boxed(Error::UnknownNick(to.to_string())))
             }
         } else {
-            //unreachable!("asdf")
-            // TODO: custom error
-            Err(Error::new(ErrorKind::Internal, "could not read sockets"))
+            Err(error::new_boxed(Error::Internal("could not read sockets".to_string())))
         }
     }
 

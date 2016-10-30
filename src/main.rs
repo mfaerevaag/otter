@@ -6,6 +6,7 @@ use ws::listen;
 
 mod state;
 mod socket;
+mod error;
 
 use state::State;
 
