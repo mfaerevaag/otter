@@ -1,20 +1,20 @@
 use ws::{self, CloseCode, Sender, Handler, Message, Result, Handshake};
 
-use state::State;
+use engine::Engine;
 
 #[derive(Clone)]
 pub struct Socket {
     pub nick: String,
     pub out: Sender,
-    state: State,
+    engine: Engine,
 }
 
 impl Socket {
-    pub fn new(nick: String, out: Sender, state: State) -> Socket {
+    pub fn new(nick: String, out: Sender, engine: Engine) -> Socket {
         Socket {
             nick: nick,
             out: out,
-            state: state,
+            engine: engine,
         }
     }
 }
@@ -22,13 +22,16 @@ impl Socket {
 impl Handler for Socket {
     fn on_open(&mut self, _: Handshake) -> Result<()> {
         println!("{}: new conn", self.nick);
-        Ok(())
+
+        self.out.send(Message::text(format!("welcome, {}", self.nick)))
     }
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
         println!("{}: got '{}'. ", self.nick, msg);
 
-        self.state.send(&self.nick, &self.nick, msg.clone())
+        self.engine.handle_msg(&self, msg.clone());
+
+        self.engine.send(&self.nick, &self.nick, msg.clone())
     }
 
     fn on_close(&mut self, code: CloseCode, reason: &str) {
