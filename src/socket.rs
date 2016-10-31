@@ -1,6 +1,9 @@
+use std::error::Error as StdError;
+
 use ws::{self, CloseCode, Sender, Handler, Message, Result, Handshake};
 
 use engine::Engine;
+use error::Error;
 
 #[derive(Clone)]
 pub struct Socket {
@@ -41,23 +44,21 @@ impl Handler for Socket {
     fn on_error(&mut self, err: ws::Error) {
         if let ws::ErrorKind::Custom(e) = err.kind {
             println!("error: {}", e);
-            // if you have multiple custom errors, you can use
-            // if e.is::<Error2>() {... to differentiate
 
-            // match *e {
-            //     Error::Internal(_) => {
-            //         if let Err(fail) = self.out.close(CloseCode::Normal) {
-            //             println!("failed to schedule close code after error: {}", fail)
-            //         }
-            //     },
-            //     _ => {
-            //         if let Err(fail) = self.out.send(Message::text(e.description())) {
-            //             println!("failed to notify socket after error: {}", fail)
-            //         }
-            //     },
-            // }
-
-            let _ = self.out.send(Message::text(e.description()));
+            if let Ok(custom) = e.downcast::<Error>() {
+                match *custom {
+                    Error::Internal(_) => {
+                        if let Err(fail) = self.out.close(CloseCode::Normal) {
+                            println!("failed to schedule close code after error: {}", fail)
+                        }
+                    },
+                    _ => {
+                        if let Err(fail) = self.out.send(Message::text(custom.description())) {
+                            println!("failed to notify socket after error: {}", fail)
+                        }
+                    },
+                }
+            }
         }
     }
 }
