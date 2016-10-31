@@ -5,7 +5,7 @@ use ws::{self, Message, Result};
 use state::State;
 use socket::Socket;
 use command::Command;
-use error::{self, Error};
+use error::Error;
 
 #[derive(Clone)]
 pub struct Engine {
@@ -64,33 +64,22 @@ impl Engine {
     }
 
     pub fn send(&mut self, from: &str, to: &str, msg: Message) -> Result<()> {
-        if let Ok(sockets) = self.state.sockets.read() {
-            match sockets.get(to) {
-                Some(sock) => {
-                    let sock = sock.lock().unwrap();
-                    sock.out.send(msg)
-                },
-                None => {
-                    self.notify(from, Message::text(format!("no suck client '{}'", to)))
-                }
-            }
-
-        } else {
-            Err(error::new_boxed(Error::Internal("could not read sockets".to_string())))
+        match self.state.get_socket(&to) {
+            Some(sock) => {
+                let sock = sock.lock().unwrap();
+                sock.out.send(msg)
+            },
+            None => Err(Error::new(Error::UnknownNick(String::from(to)))),
         }
     }
 
     pub fn notify(&self, to: &str, msg: Message) -> Result<()> {
-        if let Ok(sockets) = self.state.sockets.read() {
-            match sockets.get(to) {
-                Some(sock) => {
-                    let sock = sock.lock().unwrap();
-                    sock.out.send(msg)
-                },
-                None => Err(error::new_boxed(Error::UnknownNick(to.to_string())))
-            }
-        } else {
-            Err(error::new_boxed(Error::Internal("could not read sockets".to_string())))
+        match self.state.get_socket(&to) {
+            Some(sock) => {
+                let sock = sock.lock().unwrap();
+                sock.out.send(msg)
+            },
+            None => Err(Error::new(Error::UnknownNick(String::from(to)))),
         }
     }
 }

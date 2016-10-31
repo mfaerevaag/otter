@@ -9,7 +9,7 @@ use engine::Engine;
 
 #[derive(Clone)]
 pub struct State {
-    pub sockets: Arc<RwLock<HashMap<String, Arc<Mutex<Socket>>>>>,
+    sockets: Arc<RwLock<HashMap<String, Arc<Mutex<Socket>>>>>,
     token_counter: Arc<AtomicUsize>,
 }
 
@@ -34,13 +34,10 @@ impl State {
         sock
     }
 
-    // pub fn get_socket(&self, nick: &str) -> Option<&Socket> {
-    //     if let Ok(sockets) = self.sockets.read() {
-    //         sockets.get(nick)
-    //     } else {
-    //         None
-    //     }
-    // }
+    pub fn get_socket(&self, nick: &str) -> Option<Arc<Mutex<Socket>>> {
+        let map = self.sockets.read().unwrap();
+        map.get(nick).cloned()
+    }
 
     fn generate_nick(&self) -> String {
         let token = self.token_counter.fetch_add(1, Ordering::SeqCst);

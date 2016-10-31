@@ -10,10 +10,12 @@ pub enum Error {
     UnknownNick(String),
 }
 
-pub fn new_boxed(err: Error) -> ws::Error {
-    ws::Error::new(
-        ws::ErrorKind::Custom(Box::new(err.clone())),
-        err.description().to_string())
+impl Error {
+    pub fn new(err: Error) -> ws::Error {
+        ws::Error::new(
+            ws::ErrorKind::Custom(Box::new(err.clone())),
+            err.description().to_string())
+    }
 }
 
 impl StdError for Error {

@@ -45,18 +45,17 @@ impl Handler for Socket {
         if let ws::ErrorKind::Custom(e) = err.kind {
             println!("error: {}", e);
 
-            if let Ok(custom) = e.downcast::<Error>() {
-                match *custom {
-                    Error::Internal(_) => {
-                        if let Err(fail) = self.out.close(CloseCode::Normal) {
-                            println!("failed to schedule close code after error: {}", fail)
-                        }
-                    },
-                    _ => {
-                        if let Err(fail) = self.out.send(Message::text(custom.description())) {
-                            println!("failed to notify socket after error: {}", fail)
-                        }
-                    },
+            let custom = e.downcast::<Error>().unwrap();
+            match *custom {
+                Error::Internal(_) => {
+                    if let Err(fail) = self.out.close(CloseCode::Normal) {
+                        println!("failed to schedule close code after error: {}", fail)
+                    }
+                },
+                _ => {
+                    if let Err(fail) = self.out.send(Message::text(custom.description())) {
+                        println!("failed to notify socket after error: {}", fail)
+                    }
                 }
             }
         }
