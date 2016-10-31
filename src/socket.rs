@@ -1,5 +1,3 @@
-use std::error::Error as StdError;
-
 use ws::{self, CloseCode, Sender, Handler, Message, Result, Handshake};
 
 use engine::Engine;
@@ -31,10 +29,9 @@ impl Handler for Socket {
 
     fn on_message(&mut self, msg: Message) -> Result<()> {
         println!("{}: got '{}'. ", self.nick, msg);
+        let clone = self.clone();
 
-        self.engine.handle_msg(&self, msg.clone());
-
-        self.engine.send(&self.nick, &self.nick, msg.clone())
+        self.engine.handle_msg(&clone, msg.clone())
     }
 
     fn on_close(&mut self, code: CloseCode, reason: &str) {
@@ -43,17 +40,17 @@ impl Handler for Socket {
 
     fn on_error(&mut self, err: ws::Error) {
         if let ws::ErrorKind::Custom(e) = err.kind {
-            println!("error: {}", e);
+            println!("error: {:?}", e);
 
             let custom = e.downcast::<Error>().unwrap();
             match *custom {
-                Error::Internal(_) => {
-                    if let Err(fail) = self.out.close(CloseCode::Normal) {
-                        println!("failed to schedule close code after error: {}", fail)
-                    }
-                },
+                // Error::Internal(_) => {
+                //     if let Err(fail) = self.out.close(CloseCode::Normal) {
+                //         println!("failed to schedule close code after error: {}", fail)
+                //     }
+                // },
                 _ => {
-                    if let Err(fail) = self.out.send(Message::text(custom.description())) {
+                    if let Err(fail) = self.out.send(Message::text(format!("{}", custom))) {
                         println!("failed to notify socket after error: {}", fail)
                     }
                 }

@@ -5,12 +5,12 @@ use ws::{self, Message, Result};
 use state::State;
 use socket::Socket;
 use command::Command;
-use error::Error;
+use error::{self, Error};
 
 #[derive(Clone)]
 pub struct Engine {
-    pub addr: String,
-    pub state: State,
+    addr: String,
+    state: State,
 }
 
 impl Engine {
@@ -38,28 +38,32 @@ impl Engine {
         let _ = server.join();
     }
 
-    pub fn handle_msg(&self, sock: &Socket, msg: Message) {
+    pub fn handle_msg(&mut self, sock: &Socket, msg: Message) -> Result<()> {
         match msg {
             Message::Text(s) => {
                 match Command::parse(&s) {
-                    Some(cmd) => {
+                    Ok(cmd) => {
                         println!("parsed to: {:?}", cmd);
 
-                        // TODO:
-                        // match cmd {
-                        //     Close =>
-                        // }
+                        match cmd {
+                            Command::Message(to, msg) =>
+                                self.send(&sock.nick, &to, Message::text(String::from(msg))),
+                            Command::Help =>
+                                sock.out.send(Message::text("TODO".to_string())),
+                            Command::Close =>
+                                sock.out.send(Message::text("TODO".to_string())),
+                            Command::NoCommand(_) =>
+                                sock.out.send(Message::text("TODO".to_string())),
+                        }
                     },
-                    None => {
-                        let reply = "could not parse message";
-                        sock.out.send(Message::text(reply)).unwrap();
-                        println!("{}: {}", reply, s);
+                    Err(e) => {
+                        // let msg = format!("{}", e);
+                        // println!("failed to parse '{}': '{}'", s, msg);
+                        Err(e)
                     }
                 }
             },
-            _ => {
-                println!("got binary message: {:?}", msg);
-            }
+            _ => Err(error::boxed(Error::UnsupportedFormat("binary".to_string())))
         }
     }
 
@@ -69,17 +73,17 @@ impl Engine {
                 let sock = sock.lock().unwrap();
                 sock.out.send(msg)
             },
-            None => Err(Error::new(Error::UnknownNick(String::from(to)))),
+            None => Err(error::boxed(Error::UnknownNick(String::from(to)))),
         }
     }
 
-    pub fn notify(&self, to: &str, msg: Message) -> Result<()> {
-        match self.state.get_socket(&to) {
-            Some(sock) => {
-                let sock = sock.lock().unwrap();
-                sock.out.send(msg)
-            },
-            None => Err(Error::new(Error::UnknownNick(String::from(to)))),
-        }
-    }
+    // pub fn notify(&self, to: &str, msg: Message) -> Result<()> {
+    //     match self.state.get_socket(&to) {
+    //         Some(sock) => {
+    //             let sock = sock.lock().unwrap();
+    //             sock.out.send(msg)
+    //         },
+    //         None => Err(error::boxed(Error::UnknownNick(String::from(to)))),
+    //     }
+    // }
 }
