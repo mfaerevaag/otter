@@ -47,7 +47,7 @@ impl Engine {
 
                         match cmd {
                             Command::Message(to, msg) =>
-                                self.send(&sock.nick, &to, Message::text(String::from(msg))),
+                                self.send(&sock.nick, &to, &msg),
                             Command::Help =>
                                 sock.out.send(Message::text("TODO".to_string())),
                             Command::Close =>
@@ -67,11 +67,11 @@ impl Engine {
         }
     }
 
-    pub fn send(&mut self, from: &str, to: &str, msg: Message) -> Result<()> {
+    pub fn send(&mut self, from: &str, to: &str, msg: &str) -> Result<()> {
         match self.state.get_socket(&to) {
             Some(sock) => {
                 let sock = sock.lock().unwrap();
-                sock.out.send(msg)
+                sock.out.send(format!("<{}> {}", from, msg))
             },
             None => Err(error::boxed(Error::UnknownNick(String::from(to)))),
         }

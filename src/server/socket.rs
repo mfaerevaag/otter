@@ -40,9 +40,9 @@ impl Handler for Socket {
 
     fn on_error(&mut self, err: ws::Error) {
         if let ws::ErrorKind::Custom(e) = err.kind {
-            println!("error: {:?}", e);
-
             let custom = e.downcast::<Error>().unwrap();
+            println!("error: {}", custom);
+
             match *custom {
                 // Error::Internal(_) => {
                 //     if let Err(fail) = self.out.close(CloseCode::Normal) {

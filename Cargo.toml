@@ -3,5 +3,13 @@ name = "otter-ws-rs"
 version = "0.1.0"
 authors = ["Markus Faerevaag <m@frv.ag>"]
 
+[[bin]]
+name = "server"
+path = "src/server/main.rs"
+
+[[bin]]
+name = "client"
+path = "src/client/main.rs"
+
 [dependencies]
 ws = "*"

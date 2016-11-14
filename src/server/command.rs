@@ -27,6 +27,7 @@ impl Command {
             },
             "/close" => Ok(Command::Close),
             "/help" => Ok(Command::Help),
+            "/*" => Err(error::boxed(Error::UnknownCommand("sadf".to_string()))), // TODO: fix
             _ => Ok(Command::NoCommand(tok.join(" "))),
         }
     }
