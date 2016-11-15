@@ -1,1 +1,13 @@
+# rust
 target
+
+# latex
+report.pdf
+*.aux
+*.log
+*.toc
+*.tdo
+*.bcf
+*.out
+*.run.xml
+auto
