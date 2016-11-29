@@ -1,9 +1,13 @@
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
 \documentclass[11pt]{article}
 
 \usepackage{fullpage}
 \usepackage[utf8]{inputenc}
 \usepackage[american]{babel}
-\usepackage{csquotes}
 \usepackage{listings}
 \usepackage[table]{xcolor}
 \usepackage{amssymb}
@@ -16,11 +20,9 @@
 \usepackage{float}
 \usepackage{enumitem}
 \usepackage{fancybox}
-\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[bottom]{footmisc}
 \usepackage{makecell}
-\usepackage{ifthen}
 \usepackage{listings}
 \usepackage{parcolumns}
 \usepackage{subcaption}
@@ -28,11 +30,7 @@
 \usepackage{pdfpages}
 \usepackage{makecell}
 \usepackage{setspace}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \usepackage{hyperref}
-\usepackage[backend=biber]{biblatex}
-\bibliography{report}
 
 \setcounter{secnumdepth}{3} % only chapter and sections will be numbered
 \setcounter{tocdepth}{3}    % entries down to \subsubsections in the TOC
@@ -76,6 +74,11 @@
 \input{sections/intro}
 
 \clearpage
+\section{Risk Analysis}
+\label{sec:risk}
+\input{sections/risk}
+
+\clearpage
 \section{Design}
 \label{sec:design}
 \input{sections/design}
@@ -83,8 +86,7 @@
 \clearpage
 \section{Implementation}
 \label{sec:impl}
-\subsection{Off-the-Record Messaging (OTR)}
-\subsection{Peer-to-Peer (P2P)}
+\input{sections/impl}
 
 \clearpage
 \section{Evaluation}
@@ -96,25 +98,12 @@
 \label{sec:conclusions}
 \input{sections/conclusion}
 
-\clearpage
-\section{Discussion}
-\label{sec:discussion}
-\input{sections/discussion}
-
 \newpage
-% \nocite{*}
-\printbibliography[heading=bibintoc]
-
-\newpage
-\appendix
-\section{Appendices}
-\label{sec:appendices}
-\input{sections/appendix}
+\section{References}
+\begingroup
+\renewcommand{\section}[2]{}%
+\input{sections/biblio}
+\endgroup
 
 
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
