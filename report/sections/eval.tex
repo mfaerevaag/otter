@@ -5,20 +5,44 @@
 
 In this section we will discuss how well our solutions handles the
 threats presented in our risk analysis, in
-section~\ref{fig:vuln-matrix} and how it compares to other works,
+section~\ref{tbl:vuln-matrix} and how it compares to other works,
 which solve many of the same challenges.
 
 
-\subsection{Confidentiality and integrity}
-OTR?
-good shit
+% \subsection{Confidentiality and integrity}
+% OTR?
+% good shit
 
 
 \subsection{Anonymity}
-monitor access nodes
-Proxy with tor
-with tor?
-peer to peer?
+% monitor access nodes
+% Proxy with tor
+% with tor?
+% peer to peer?
+
+We have earlier stated that our solution features anonymity, as the
+users real identity is never needed by the system. It must be said,
+that if an adversary was to monitor the IP addresses of clients
+connecting to the central server, their identities could be
+compromised. This issue is something that is difficult to prevent, as
+the topography of the system is designed to behave is such a way.
+
+A solution to this is to make the application as a Peer-to-Peer (P2P),
+as the adversary will not have an obvious place to monitor traffic. We
+chose from the start only to discuss this point, but not consider it
+during the design or implementation, as it adds considerable
+complexity to both.
+
+An alternative solution, which does not change the design of the
+system, is to utilize technologies such as TOR~\footnote{TOR -
+  \url{https://www.torproject.org/}} which also secures communications
+in transit, but also hides the clients origin. The client application
+can therefor route its traffic through TOR, using it as a proxy. This
+can be done easily with applications such as {\tt
+  torify}~\footnote{\url{https://wiki.archlinux.org/index.php/tor\#Torify}}. It
+should be mentioned that there are examples where clients have been
+identified despite using TOR, for reasons due to bad configuration of
+TOR and monitoring of TOR access nodes.
 
 
 \subsection{Similar works}
@@ -30,4 +54,15 @@ has later been patched in some way to try to remedy this.
 
 Open protocols such IRC~\footnote{RFC 2812 -
   \url{https://tools.ietf.org/html/rfc2812}} and XMPP~\footnote{RFC
-  3921 - \url{https://xmpp.org/rfcs/rfc3921.html}} are
+  3921 - \url{https://xmpp.org/rfcs/rfc3921.html}} are both criticized
+for not handling security out-of-the-box~\footnote{IRC Security -
+  \url{http://www.irchelp.org/security/}}~\footnote{Securing XMPP -
+  \url{https://wiki.xmpp.org/web/Securing_XMPP}}. This has to be
+taking into consideration by the user itself, typically through a
+secure connection with TLS. Although this secures the transmissions,
+the data is still in the clear on the server. Some chat application,
+for instance Pidgin which is quite popular~\footnote{Pidgin -
+  \url{https://pidgin.im/}}, support third-party add-on software. One
+of these add-ons are {\tt pidgin-otr} which adds Off-The-Record (OTR)
+messaging. This features full confidentiality and integrity using the
+same cryptographic primitives.
