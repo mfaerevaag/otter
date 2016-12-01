@@ -3,41 +3,142 @@
 %%% TeX-master: "../report"
 %%% End:
 
-When designing mission or safety-critical systems the design, and the
+When creating mission or safety-critical systems, the design, and the
 planning there of, is of paramount importance. All challenges which
-the product is to solve has to be solved during the design, and not
-programmed around during the implementation fase. This would only
+the product is to solve has to be solved during the design fase, and
+not programmed around during the implementation fase. This would only
 create unpredictability and uncertainty regarding to the behavior of
 the system. This is if course, not beneficial when attempting to
-ensure a system will correctly in a future scenario. In this process
-it natural to begin with evaluating which risks are involved.
+ensure a system will behave correctly in a future scenario. In this
+process it natural to begin with evaluating which risks are involved.
 
 To evaluate which risks are involved we first need to identify the
-systems assets, i.e. what do we want to protect. This could be
+system's assets, i.e. what do we want to protect. This could be
 intellectual property, documentation, hardware, software or
 data~\cite[p. 528]{pfleeger}. For our scenario, we will only be
-looking at the latter. In this section we will discuss which types of
-data we consider to be an asset, what threats we have to protect
-against therefor and what we consider to be the relevant attacker
-models. Finally we will define the scope of our project, based on the
-results just discussed.
+looking at the latter, as our system is solely a software product,
+independent of any application or purpose.
 
+In this section we will discuss which types of data we consider to be
+an asset, what threats we have to protect against therefor and what we
+consider to be the relevant attacker models. Finally we will define
+the scope of our project, based on the results just discussed.
+
+Throughout this report will use three central concepts regarding
+properties of fault-tolerant and security-critical systems, namely
+availability, integrity and confidentiality. These properties are what
+makes the system at hand valuable to any
+user~\cite{anderson}. We will regard \emph{confidentiality}
+as the of the message contents, \emph{integrity} as the assurance that
+messages cannot be tampered with or forged and \emph{availability} as
+the system's ability to be available to the users. Additionally we
+introduce \emph{anonymity} as the secrecy of the clients' real
+identities.
 
 \subsection{Assets}
 
-TODO
+As mentioned, our system is fairly simple with regards to assets, as
+there is only data, hardware and the software it self that can be
+considered as something of value. Data can be represented by both
+messages and the surrounding metadata. Metadata that could be valuable
+for an adversary are, for instance, identities of clients, such as IP
+addresses and names; relationships between clients, i.e. who is
+talking to whom; what times are messages being sent, etc. The
+integrity and confidentiality of the system are key qualities.
+
+Software includes the system itself, but also the eventual products
+used on web-servers, operating systems etc.
+
+Hardware includes the server(s) which the system runs on.
 
 
 \subsection{Vulnerabilities and threats}
 
-TODO
+We will continue with identifying the vulnerabilities threatening our
+system. In order to do this we use the C-I-A triad~\cite{anderson},
+which introduces four acts that could compromise the systems assets or
+otherwise cause harm, namely; interception, interruption, modification
+and fabrication. All can be viewed as a breach of earlier mentioned
+qualities of system, where interception is as a breach of
+confidentiality, interruption of availability, and modification and
+fabrication of integrity. We will briefly discuss each in turn, with
+regards to the data.
+
+Confidentiality ensures that data only can be read by authorized
+parties. If an adversary is passively listening in to communications,
+these should not reveal any information. An obvious solution is the
+use of cryptography to do encryption before transmission.
+
+Availability can be compromised by denying a user of using the
+system. This can be done with Denial of Service (DoS) attacks, which
+are hard to defend against. A DoS attack is essentially the act of
+creating large amounts of traffic to the servers providing the service
+to deny other users service. As there is hard for a server to
+distinguish legitimate traffic and not, which is why it is a common
+vulnerability for most public systems. Another attack would be
+compromising the server which the service runs on. Both of these
+attacks is not something detected by our system and will therefore be
+regarded as out of the scope of this project.
+
+Integrity is arguably one of the most important traits with a
+security-critical system. Even worse than denying service to a user is
+providing him or her with fraudulent information. If an adversary was
+able to do a Man in the Middle (MITM) attack, where he or she does not
+only observe the traffic, but actively alter it, the adversary can
+modify or create fraudulent data from an arbitrary user to another.
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{l|l|l|l}
+    \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{\textbf{Confidentiality}} & \multicolumn{1}{c|}{\textbf{Integrity}} & \multicolumn{1}{c}{\textbf{Availability}} \\ \hline
+    Intellectual Property &  & & \\ \hline
+    Documentation & & & \\ \hline
+    Hardware & & backdoor & stolen, destroyed \\ \hline
+    Software & & backdoor & deleted, license expire \\ \hline
+    Data & disclosure, inference & tampered & deleted, ransom ware
+  \end{tabular}
+  \caption{\label{tbl:vuln-matrix} Vulnerability Matrix}
+\end{table}
+
+Lastly, the software and hardware is vulnerable to being stolen or
+removed, infected with malware or by licenses and such expiring and
+therefore denying service. To summarize, figure~\ref{tbl:vuln-matrix}
+shows the different threats to our system, though only considering
+data.
 
 
 \subsection{Attacker models}
 
-TODO
+Likely attackers of our system can be split into different
+categories, depending on their motives for attack. Again motives will
+differ depending on the users of the system.
+
+The first and least harmful category would be private people our small
+groups, having a personal incentive for either denying service or
+reading someones messages. We do not regard these as a significant
+threat as they do not posses the financial backing or knowledge to
+break an a system using modern cryptographic standards.
+
+If it was a corporation using the system obvious attackers would be
+competing companies. These would likely have finical incentives for
+attacking and therefore be greatly financed, causing a great threat to
+availability through DoS attacks, for instance.
+
+Assuming the system is available to everyone, and not a specific group
+of people, we could take case of the PRISM program in the US, where
+governmental institution with enormous financial power, would like to
+monitor our system. This would arguably be the systems greatest
+adversary as their attack is both hard to detect and can compromise
+confidentiality, or even integrity.
+
 
 
 \subsection{Scope of project}
+\label{sec:scope}
 
-In this project we will focus on TODO
+In this project we will focus on ensuring confidentiality and
+integrity is upheld, regardless of attacker. Users will always remain
+anonymous by choice and not have any data or metadata disclosed
+without intentionally doing so.
+
+TODO mention anonymity, accountability, verification, etc?

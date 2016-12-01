@@ -3,6 +3,53 @@
 %%% TeX-master: "../report"
 %%% End:
 
-\subsection{Reliability and availability}
-\subsection{Integrity and confidentiality}
-\subsection{What it is not}
+In this section we will look at how, given our problem
+scenario\todo{clearly defined?} and scope of project~\ref{sec:scope},
+design an effective and efficient system solving all\todo{all?}
+challenges previously mentioned.
+
+
+\subsection{Topography}
+
+As shown in figure TODO\todo{missing ref}, the system is made up of
+a central server with an arbitrary number of connected clients.
+
+TODO fig
+
+
+\subsection{Cryptography}
+
+To solve the issues of confidentiality and integrity we will utilize
+cryptography, including both symmetric and asymmetric algorithms.
+
+When two clients connect to the server, as shown in the figure
+above\todo{is the figure above?}, these does not necessarily have any
+knowledge of each other, yet want to have full confidentiality in
+their dialogue. We can solve this with by exchanging public keys,
+where both send each other their public keys. These can then be used
+by each client to send encrypted messages to the other.
+
+One could ask if this limits the conversation to only two
+participants. Using solely asymmetric cryptography this would be
+impractical, but not impossible. Though, by using the public keys to
+exchange a symmetric key, an arbitrary number of clients could easily
+send and receive encrypted messages with minimal computational
+overhead, once the symmetric key had been distributed.
+
+% TLS, MITM
+It is important that connections to the server is done through a
+secure channel, preferably using TLS encryption. This way, no MITM
+attack could compromise the data, or even worse, the key exchanges
+done between clients. If an adversary could intercept and change the
+key during an exchange, he or she would have the ability to modify or
+forge any message in the name of the intercepted party.
+
+% verification
+Another benefit of asymmetric, or public-key, encryption is that it
+could be used to verify the identify of a client. Instead of
+generating an temporary key pair upon connecting to the server, the
+client could choose to use an existing key pair. If two clients know
+each other they could digital signatures to verify that the other
+party. If one does not want to be verified, thus remaining anonymous,
+one could simply generate a key-pair which are disposed upon
+disconnecting.
