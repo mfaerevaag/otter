@@ -52,39 +52,22 @@ evidence.\todo{good bad sides of anon?}
 
 
 
-\paragraph{Authentication}
+\paragraph{Authentication}of information is important because of
+vulnerabilities ot a malicious party either pretending to be you or
+someone you know. Without authentication the malicious party (Eve) can
+sit in between Bob and Alices conversation and pretend to be either of
+them. This is where authentication plays an important role. With
+authenticfication we ensure identity of the person we are speaking
+with. This is can be done several different ways but in our case we
+decided to use Transport Layer Security (TLS) which predecessor is,
+Secure Sockets Layer (SSL).
 
-
-
-
-
-
-%% The authentication of information can pose special problems with
-%% electronic communication, such as vulnerability to man-in-the-middle
-%% attacks, whereby a third party taps into the communication stream, and
-%% poses as each of the two other communicating parties, in order to
-%% intercept information from each. Extra identity factors can be
-%% required to authenticate each party's identity.
-
-%% The term digital authentication refers to a group of processes where
-%% the confidence for user identities is established and presented via
-%% electronic methods to an information system. It is also referred to as
-%% e-authentication. The digital authentication process creates technical
-%% challenges because of the need to authenticate individuals or entities
-%% remotely over a network. The American National Institute of Standards
-%% and Technology (NIST) has created a generic model for digital
-%% authentication that describes the processes that are used to
-%% accomplish secure authentication:
-
-%% Enrollment – an individual applies to a credential service provider
-%% (CSP) to initiate the enrollment process. After successfully proving
-%% the applicant’s identity, the CSP allows the applicant to become a
-%% subscriber.  Authentication – After becoming a subscriber, the user
-%% receives an authenticator e.g., a token and credentials, such as a
-%% user name. He or she is then permitted to perform online transactions
-%% within an authenticated session with a relying party, where they must
-%% provide proof that he or she possesses one or more authenticators.
-%% Life-Cycle maintenance – the CSP is charged with the task of
-%% maintaining the user’s credential of the course of its lifetime, while
-%% the subscriber is responsible for maintaining his or her
-%% authenticator(s).[1][8]
+%% \begin{wrapfigure}{r}{0.4\textwidth}
+%%   \vspace{-10pt}
+%%   \begin{center}
+%%     \includegraphics[width=0.3\textwidth]{figures/mitm}
+%%   \end{center}
+%%   \vspace{0pt}
+%%   \caption{\label{fig:demographic} Target demographic}
+%%   \vspace{-10pt}
+%% \end{wrapfigure}
