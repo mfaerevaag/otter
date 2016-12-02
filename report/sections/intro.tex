@@ -3,11 +3,88 @@
 %%% TeX-master: "../report"
 %%% End:
 
-motivation
-scenario
+\subsubsection{motivation}
+We wanted to explore the concept of private and
+confidential communication as we feel that commonly used messaging
+solutions do not provide enough. We aim to do so using RSA as our
+encryption standard and using TLS as encryption for the connections.
+...
+...
+...
 
+
+scenario
+create a scenario or just more motivation??
 discuss:
 
-security analysis
-- confidentiality (break, listen, etc.)
+\subsubsection{security analysis}
+There are many ways to attack a system depending on what you want and
+what your attacking. We aim to have confidentiality and privacy by
+securing our `application'~\todo{get better word} from at least the
+following attacks:
+\begin{itemize}
+\item Man in the middle(MtiM)
+\item Chosen-ciphertext attack (CCA)
+\item Ciphertext-only attack (COA)
+\item Time/memory tradeoff attacks (TMTA)
+\end{itemize}
+
+\paragraph{Confidentiality}
+How sure can we be that the message we send or receive have not been tamperd with or has been already read
+
 - privacy (anon, auth)
+
+\paragraph{Privacy}
+\paragraph{Anonymity}
+is a cornerstone of the internet, most comments are done
+anonymously using unidentifiable pseudonyms. Though these usernames
+can be used to identify the user they have the possibility of being
+separated and anonymous from the actor. Anonymity on the internet is
+basically that a comment you state will not be able to be tracked back
+to you.
+
+A big problem for anonymity is IP adresses as they serve as an virtual
+address. These can be mapped to your Internet Service Provider (ISP),
+who can provide customer information as they know what IP addresses
+are leased to whom. This does not implicate a specific indivudual but
+provides regional information and is powerful circumstantial
+evidence.\todo{good bad sides of anon?}
+
+
+
+\paragraph{Authentication}
+
+
+
+
+
+
+%% The authentication of information can pose special problems with
+%% electronic communication, such as vulnerability to man-in-the-middle
+%% attacks, whereby a third party taps into the communication stream, and
+%% poses as each of the two other communicating parties, in order to
+%% intercept information from each. Extra identity factors can be
+%% required to authenticate each party's identity.
+
+%% The term digital authentication refers to a group of processes where
+%% the confidence for user identities is established and presented via
+%% electronic methods to an information system. It is also referred to as
+%% e-authentication. The digital authentication process creates technical
+%% challenges because of the need to authenticate individuals or entities
+%% remotely over a network. The American National Institute of Standards
+%% and Technology (NIST) has created a generic model for digital
+%% authentication that describes the processes that are used to
+%% accomplish secure authentication:
+
+%% Enrollment – an individual applies to a credential service provider
+%% (CSP) to initiate the enrollment process. After successfully proving
+%% the applicant’s identity, the CSP allows the applicant to become a
+%% subscriber.  Authentication – After becoming a subscriber, the user
+%% receives an authenticator e.g., a token and credentials, such as a
+%% user name. He or she is then permitted to perform online transactions
+%% within an authenticated session with a relying party, where they must
+%% provide proof that he or she possesses one or more authenticators.
+%% Life-Cycle maintenance – the CSP is charged with the task of
+%% maintaining the user’s credential of the course of its lifetime, while
+%% the subscriber is responsible for maintaining his or her
+%% authenticator(s).[1][8]
