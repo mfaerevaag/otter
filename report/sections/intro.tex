@@ -7,7 +7,7 @@
 We wanted to explore the concept of private and
 confidential communication as we feel that commonly used messaging
 solutions do not provide enough. We aim to do so using RSA as our
-encryption standard and using TLS as encryption for the connections.
+encryption standard and using TLS for our authentication.
 ...
 ...
 ...
@@ -29,12 +29,19 @@ following attacks:
 \item Time/memory tradeoff attacks (TMTA)
 \end{itemize}
 
-\paragraph{Confidentiality}
-How sure can we be that the message we send or receive have not been tamperd with or has been already read
+\paragraph{Confidentiality} is protecting information from disclosure
+to unauthorized parties. Information is a currency bank accounts,
+credit card numbers, social security trade secrets, all this data can
+be used maliciously therefore it needs to be protected. A key element
+of keeping our data confidental is encryption. Encryption esures that
+only the people with the key can access the data. Again there are
+several ways to break encryption such as CCA, COA, TMTA or simply
+obtaining the private key of the target. To secure yourself from most
+of these attacks the encrypton key should at least be above 128 bits,
+as a smaller key has been shown to be breakable. In our case we use
+the asymetric encryption RSA with 256 bit public and private keys.
 
-- privacy (anon, auth)
-
-\paragraph{Privacy}
+\paragraph{Privacy} Is a concern for many people
 \paragraph{Anonymity}
 is a cornerstone of the internet, most comments are done
 anonymously using unidentifiable pseudonyms. Though these usernames
@@ -49,8 +56,6 @@ who can provide customer information as they know what IP addresses
 are leased to whom. This does not implicate a specific indivudual but
 provides regional information and is powerful circumstantial
 evidence.\todo{good bad sides of anon?}
-
-
 
 \paragraph{Authentication}of information is important because of
 vulnerabilities ot a malicious party either pretending to be you or
