@@ -3,6 +3,10 @@ extern crate openssl;
 
 use std::{io, str};
 
+use openssl::pkey::PKey;
+use openssl::rsa::{Rsa, PKCS1_PADDING};
+
+
 #[macro_use]
 mod utils;
 mod engine;
