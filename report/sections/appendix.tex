@@ -1,0 +1,28 @@
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../report"
+%%% End:
+
+\subsection{Running the application}
+The application is Rust, and therefore requires the {\tt rustc}
+compiler (v1.13.0) and {\tt cargo} build system (v0.14.0).
+
+The application contains two binaries; one for the server and one for
+the client, named as such.
+
+Firstly, from the root directory, start the server with {\tt cargo run
+  --bin server}. The output should look like the following
+\begin{verbatim}
+   Compiling otter-ws-rs v0.1.0 (file:///home/markus/dev/code/fts/otter-ws-rs)
+    Finished debug [unoptimized + debuginfo] target(s) in 3.38 secs
+     Running `target/debug/server`
+listening to 127.0.0.1:10000...
+\end{verbatim}
+
+Now, a client can be started from the directory with {\tt cargo run
+  --bin client}. The output should look like the following
+\begin{verbatim}
+TODO
+\end{verbatim}
+
+TODO
