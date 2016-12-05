@@ -3,11 +3,100 @@
 %%% TeX-master: "../report"
 %%% End:
 
-TODO
 
-created proof of concept
 
-does include so and so
 
-NOT so and so
-- proper authenticated key exchange
+\subsubsection{Rust}
+We decided to implement our project a low-level language as the
+development is challenging and fulfilling. The many pitfalls in c/c++,
+primarily memory safety can lead to many serious bugs such as buffer
+overflows, memory leaks, double deallocations, and dangling
+pointers.
+
+So we wanted a language where the memory management/Garbage
+collection was handled automatically. Rust does this in a very
+pragmatic way by giving binding a value to exactly one place and
+one place only. Because of this the resources that the variables
+hold (memory, file handles, sockets, etc.) can be automatically freed
+when the variable goes out of a scope (defined by code blocks within
+curly braces, { and }).
+
+\subsubsection{Server and Client}
+We created proof of concept terminal application that requires a
+server and an arbitrary number of clients. The implementation includes
+the follwoing files:
+\begin{figure}[h]
+  \begin{minipage}{0.5\textwidth}
+    \paragraph{Server}
+    \begin{itemize}
+      \item main.rs
+      \item socket.rs
+      \item engine.rs
+      \item command.rs
+      \item state.rs
+    \end{itemize}
+  \end{minipage} \hfill
+  \begin{minipage}{0.5\textwidth}
+    \paragraph{Client}
+    \begin{itemize}
+      \item main.rs
+      \item socket.rs
+      \item engine.rs
+      \item utils.rs
+    \end{itemize}
+  \end{minipage} \vfill
+  \caption{Server and client}
+\end{figure}
+
+\paragraph{Server}
+\todo{where is ****key transfer***}
+
+For our service to function properly we need a server to recieve data
+and to pass it along to the inteded client. This is achived through
+network sockets, which is simple enough to implement but due to our
+intent of having $'N'$ users when N>cores we will run in to blocking.
+This is handled by the \textbf{ws} library as it creates an event loop
+that, creates and runs a WebSocket in the current thread. These are
+blocking functions, so they will only return after the encapsulated
+WebSocket has been shutdown.
+
+Where \textbf{main.rs} has the main function and starts an instance of
+engine defined in \textbf{engine.rs}, the address and port to connect
+to the server is set here. \textbf{engine.rs} starts our TCP server
+and waits for clients to connect. It also handles messages, receiving
+and passing them along to the correct client in respectively
+\emph{handle\_msg} and \emph{send}. When a connection is made to the
+server engine gives the connection a socket. The socket handler is
+implemented in \textbf{socket.rs}. But the engine recieves the socket
+through \textbf{state.rs} which keeps track of all our connections so
+we don't give the same socket and id to clients. The socket handler
+will call \emph{on\_open} when the WebSocket handshake is successful
+which sends a message to the client.
+
+Basically when a client gives an action the handler handles them if he
+closes the \emph{on\_close} is called and the server is notified, when
+a message is sent \emph{on\_message} is called and the engine is
+called to handle the message. And when an error is recieved it calls
+\emph{on\_error} which matches the error with our defined errors from
+\textbf{error.rs}. If this fails it lets the server know that it
+failed to notify the client why it had an error.
+
+\paragraph{Client}
+All our encryption happens clientside in our main function we generate a set of private/public keys the private key
+
+
+engine simply connects the client to the server.
+
+socket keeps the connection prints to terminal and reas from terminal to create message
+
+
+
+
+
+
+\subsubsection{Requirements}
+Now we will go through the main libraries and explain what they do for
+us. \textbf{ws} provides us with a implementation of WebSockets using
+the \textbf{MIO} library. \textbf{openssl} is the toolkit for the TLS
+protocol.  \textbf{bitflags} .\textbf{idna}, \textbf{miom},
+\textbf{miow}, \textbf{net2}, \textbf{sha1}, \textbf{slab}, \textbf{url}.
