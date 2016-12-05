@@ -13,3 +13,4 @@ path = "src/client/main.rs"
 
 [dependencies]
 ws = "*"
+openssl = "*"
