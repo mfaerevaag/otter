@@ -3,10 +3,19 @@
 %%% TeX-master: "../report"
 %%% End:
 
+We have provided together with this report, a Proof of Concept (PoC)
+application, featuring a server and client application. Due to time
+limitations we have not implemented all features described in this
+report, but rather laid the ground work proving its feasibility.
+
+In this section we will describe how each component of the system is
+implemented with regards to the design, and what choices were made
+therefor. We will state when a feature is not implemented in our PoC,
+but also explain how we have planned to implement it based on our
+already implemented design.
 
 
-
-\subsubsection{Rust}
+\subsection{Rust}
 We decided to implement our project a low-level language as the
 development is challenging and fulfilling. The many pitfalls in c/c++,
 primarily memory safety can lead to many serious bugs such as buffer
@@ -18,12 +27,15 @@ giving binding a value to exactly one place and one place
 only. Because of this the resources that the variables hold (memory,
 file handles, sockets, etc.) can be automatically freed when the
 variable goes out of a scope (defined by code blocks within curly
-braces, { and }).
+braces, \{ and \}).
 
-\subsubsection{Server and Client}
-We created proof of concept terminal application that requires a
-server and an arbitrary number of clients. The implementation includes
-the follwoing files:
+
+\subsection{Server and Client}
+As mentioned, we created PoC terminal application that uses a server
+and an arbitrary number of clients. Using the Rust package system,
+{\tt cargo}, we can include several binary target in the same
+project. The implementation includes the follwoing files, split into
+server and client binaries:
 \begin{figure}[h]
   \begin{minipage}{0.5\textwidth}
     \paragraph{Server}
@@ -47,58 +59,111 @@ the follwoing files:
   \caption{Server and client}
 \end{figure}
 
-\paragraph{Server}
-\todo{where is ****key transfer***}
-
+\subsubsection{Server}
 For our service to function properly we need a server to recieve data
 and to pass it along to the inteded client. This is achived through
-network sockets, which is simple enough to implement but due to our
-intent of having $'N'$ users when N>cores we will run in to blocking.
-This is handled by the \textbf{ws} library as it creates an event loop
-that, creates and runs a WebSocket in the current thread. These are
-blocking functions, so they will only return after the encapsulated
-WebSocket has been shutdown.
+network sockets, as explained in the following section. They are
+simple enough to use but due to our intent of having $'N'$ users when
+$N > cores$ we will run in to blocking. This is handled by the by
+creating an event loop that, creates and runs a web socket in its own
+thread. As an event occurs, for instance an incoming message, an event
+handler is triggered.
 
-Where \textbf{main.rs} has the main function and starts an instance of
-engine defined in \textbf{engine.rs}, the address and port to connect
-to the server is set here. \textbf{engine.rs} starts our TCP server
-and waits for clients to connect. It also handles messages, receiving
-and passing them along to the correct client in respectively
-\emph{handle\_msg} and \emph{send}. When a connection is made to the
-server engine gives the connection a socket. The socket handler is
-implemented in \textbf{socket.rs}. But the engine recieves the socket
-through \textbf{state.rs} which keeps track of all our connections so
-we don't give the same socket and id to clients. The socket handler
-will call \emph{on\_open} when the WebSocket handshake is successful
-which sends a message to the client.
+The {\tt main}-function is the entry point of every Rust application,
+as in many other languages. The {\tt main.rs} starts an instance of
+the engine, defined in {\tt engine.rs}, the address and port to
+connect to the server is set here. {\tt engine.rs} starts listens to a
+specific port (hardcoded to 10000) waiting for incoming sockets. The
+task of keeping track of all connected sockets is delegated to {\tt
+  state.rs}. It holds a dynamic key-value collection, a hash set, with
+the nick of the client, which is generated on connection, as key and
+socket as value. As all sockets would like to read from this
+collection from their respective threads, it is protected by a
+semaphore-like value, called a {\tt RwLock}, ensuring that only can do
+this at a time.
 
-Basically when a client gives an action the handler handles them if he
-closes the \emph{on\_close} is called and the server is notified, when
-a message is sent \emph{on\_message} is called and the engine is
-called to handle the message. And when an error is recieved it calls
-\emph{on\_error} which matches the error with our defined errors from
-\textbf{error.rs}. If this fails it lets the server know that it
-failed to notify the client why it had an error.
+When a socket is triggered with a message, it is given to the engine
+so it can decide how it should be handled. As explained in
+section~\ref{sec:design-ui}, there is a command system. We have
+implemented this by parsing the message into a structure represented
+by a command and its arguments. For instance, if the command is of
+type {\tt /msg} it will send the message forward to its intended
+receiver. If the message does not follow the required format, an error
+is thrown, defined in {\tt error.rs}, and passed back to the socket
+which informs its counterpart accordingly.
 
-\paragraph{Client}
-All our encryption happens clientside in our main function we generate
-a set of private/public keys the private key
+\subsubsection{Client}
+All our encryption happens client-side in our main function we either generate
+a set of keys, or we load a key from file which can be used a identity
+verification.
 
-
-engine simply connects the client to the server.
-
-socket keeps the connection prints to terminal and reas from terminal
-to create message. also here the asymmetric encryption is started a on
-first connect the public key of the client is sent to the server.
-
-
-
+The client implementation is very simple. There are two threads; one
+waiting to human input to send, and one waiting for data from the
+server. When sending or receiving, the data is either encrypted or
+decrypted accordingly.
 
 
+\subsection{Communication Protocol}
+When choosing the protocol which the server and clients will
+communicate through, we chose to use web sockets. A socket provides a
+convenient handle which the two end points can conveniently pass data
+through. To relieve ourself of the major work load of making a web
+socket library in Rust, we chose an existing open source
+implementation named {\tt
+  ws-rs}~\footnote{\url{https://github.com/housleyjk/ws-rs}}.
 
-\subsubsection{Requirements}
+The encoding of the data sent over this link are simply chosen as
+UTF8, as all Rust strings are already UTF8 encoded. As we found, this
+offers a challenge as the cipher texts that RSA produces are not UTF8,
+and are therefore not safe to parse directly as a UTF8 string. To
+solve this we first encode the cipher text to base64, which only uses
+UTF8 safe characters, and there after send as a string. The receiver
+would simply decode the base64 to bytes and decrypt.
+
+
+\subsection{Cryptography}
+Currently our clients loads a private and public key which they use
+for encryption and decryption. We did not get the time to properly
+share the public keys with the server, to the clients can exchange
+keys, as explained in the designed. To achieve this we would simply
+add a field to the socket structure, in {\tt socket.rs}, and setup a
+synchronization process when a new sockets connection. The new socket
+would be sent the public key of its counterpart by adding a new
+command in {\tt command.rs}, for instance called {\tt /keyshare}.
+
+Also, the implementation includes chat rooms, which is essentially a
+list of sockets. We did not have time to implement such that clients
+to joins the room and share a symmetric key for convenient
+encryption. Though, this would be done much in the same manner as
+above, where the we would add a field to the room structure, which
+held a symmetric key that could be distributed to the
+clients. Alternatively the clients could distribute the keys to the
+new clients them selves, keeping the server blind to the content to
+the message which are exchanged. To do this the client would simply
+encrypt the symmetric key using the recipients public key and send
+it. To make it so that the receiver can verify the origin of the
+message, the client could encrypt the key with its own private key,
+essentially signing the key, and then encrypt it with the receivers
+public key and send.
+
+
+\subsection{Requirements}
 Now we will go through the main libraries and explain what they do for
-us. \textbf{ws} provides us with a implementation of WebSockets using
-the \textbf{MIO} library. \textbf{openssl} is the toolkit for the TLS
-protocol.  \textbf{bitflags} .\textbf{idna}, \textbf{miom},
-\textbf{miow}, \textbf{net2}, \textbf{sha1}, \textbf{slab}, \textbf{url}.
+us. As mentioned, {\tt ws-rs} provides us with a implementation of
+web sockets using
+the {\tt MIO} library.
+
+The {\tt openssl} library, or ``crate'' in Rust-speak, is the
+toolkit for the TLS protocol.
+
+Lastly, {\tt rustc-serialize} proved a library of base64 encoding the
+cipher texts, as explained in above.
+
+% TODO dont think we need to mention these
+% {\tt bitflags}  {\tt idna}, {\tt miom},
+% {\tt miow}, {\tt net2}, {\tt sha1}, {\tt slab}, {\tt url}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../report"
+%%% End:
