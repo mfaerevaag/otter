@@ -3,21 +3,16 @@
 %%% TeX-master: "../report"
 %%% End:
 
-\subsubsection{motivation}
-We wanted to explore the concept of private and
-confidential communication as we feel that commonly used messaging
-solutions do not provide enough. We aim to do so using RSA as our
-encryption standard and using TLS for our authentication.
-...
-...
-...
+\subsubsection{Motivation}
+We wanted to explore the concept of private and confidential
+communication as we feel that commonly used messaging solutions do not
+provide enough. We aim to do so using RSA as asymetric encryption
+standard and using TLS for our symmetric. Using asymetric and symetric
+gives us the needed privacy and confidentiallity as one will be used
+for authentication and the other for the actual messages.
 
 
-scenario
-create a scenario or just more motivation??
-discuss:
-
-\subsubsection{security analysis}
+\subsubsection{Security analysis}
 There are many ways to attack a system depending on what you want and
 what your attacking. We aim to have confidentiality and privacy by
 securing our `application'~\todo{get better word} from at least the
@@ -41,16 +36,21 @@ of these attacks the encrypton key should at least be above 128 bits,
 as a smaller key has been shown to be breakable. In our case we use
 the asymetric encryption RSA with 256 bit public and private keys.
 
-\paragraph{Privacy} Is a concern for many people
-\paragraph{Anonymity}
-is a cornerstone of the internet, most comments are done
-anonymously using unidentifiable pseudonyms. Though these usernames
-can be used to identify the user they have the possibility of being
-separated and anonymous from the actor. Anonymity on the internet is
-basically that a comment you state will not be able to be tracked back
-to you.
+\paragraph{Privacy} is a concern for many people today. Countries like
+USA and the UK have a history of spying on their people. Eventhough
+you might not have anything to hide, it is a right to have
+privacy. The other hand this creates safe havens for criminals. So the
+question of if it is good or not is a philosphical one and will not be
+discussed here.
 
-A big problem for anonymity is IP adresses as they serve as an virtual
+\paragraph{Anonymity}
+is a cornerstone of the internet, most comments are done anonymously
+using unidentifiable pseudonyms. Though these usernames can be used to
+identify the user they have the possibility of being separated and
+anonymous from the actor. Anonymity on the internet is basically that
+a comment you state will not be able to be tracked back to you.
+
+An issue with anonymity is IP adresses as they serve as an virtual
 address. These can be mapped to your Internet Service Provider (ISP),
 who can provide customer information as they know what IP addresses
 are leased to whom. This does not implicate a specific indivudual but
@@ -66,13 +66,3 @@ authenticfication we ensure identity of the person we are speaking
 with. This is can be done several different ways but in our case we
 decided to use Transport Layer Security (TLS) which predecessor is,
 Secure Sockets Layer (SSL).
-
-%% \begin{wrapfigure}{r}{0.4\textwidth}
-%%   \vspace{-10pt}
-%%   \begin{center}
-%%     \includegraphics[width=0.3\textwidth]{figures/mitm}
-%%   \end{center}
-%%   \vspace{0pt}
-%%   \caption{\label{fig:demographic} Target demographic}
-%%   \vspace{-10pt}
-%% \end{wrapfigure}
