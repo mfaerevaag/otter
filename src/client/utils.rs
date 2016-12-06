@@ -12,6 +12,7 @@ macro_rules! log_msg {
     }};
 }
 
+#[allow(dead_code)]
 pub fn hexdump<W: Write>(out: &mut W, buf: &[u8]) {
     out.write_all(b"    ").unwrap();
 

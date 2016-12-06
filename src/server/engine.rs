@@ -35,6 +35,8 @@ impl Engine {
             }).unwrap();
         });
 
+        self.state.clone().new_room("asdf");
+
         let _ = server.join();
     }
 
@@ -48,12 +50,25 @@ impl Engine {
                         match cmd {
                             Command::Message(to, msg) =>
                                 self.send(&sock.nick, &to, &msg),
-                            Command::Help =>
-                                sock.out.send(Message::text("TODO".to_string())),
-                            Command::Close =>
-                                sock.out.send(Message::text("TODO".to_string())),
+
                             Command::NoCommand(_) =>
                                 sock.out.send(Message::text("TODO".to_string())),
+
+                            Command::Help =>
+                                sock.out.send(Message::text("TODO".to_string())),
+
+                            Command::Close =>
+                                sock.out.send(Message::text("TODO".to_string())),
+
+                            Command::List => {
+                                let (users, rooms) = self.state.get_names();
+
+                                let msg = format!("users:\n\t{}\n\nrooms:\n\t{}",
+                                                  users.join("\n\t"),
+                                                  rooms.join("\n\t"));
+
+                                sock.out.send(Message::text(msg))
+                            },
                         }
                     },
                     Err(e) => {
@@ -71,7 +86,7 @@ impl Engine {
         match self.state.get_socket(&to) {
             Some(sock) => {
                 let sock = sock.lock().unwrap();
-                sock.out.send(format!("<{}> {}", from, msg))
+                sock.out.send(format!("/msg {} {}", from, msg))
             },
             None => Err(error::boxed(Error::UnknownNick(String::from(to)))),
         }

@@ -5,9 +5,10 @@ use error::{self, Error};
 #[derive(Debug)]
 pub enum Command {
     Message(String, String),
-    Help,
-    Close,
     NoCommand(String),
+    List,
+    Close,
+    Help,
 }
 
 impl Command {
@@ -25,8 +26,13 @@ impl Command {
                     Err(error::boxed(Error::WrongNumArgs("msg".to_string(), 2)))
                 }
             },
+
+            "/list" => Ok(Command::List),
+
             "/close" => Ok(Command::Close),
+
             "/help" => Ok(Command::Help),
+
             "/*" => Err(error::boxed(Error::UnknownCommand("sadf".to_string()))), // TODO: fix
             _ => Ok(Command::NoCommand(tok.join(" "))),
         }
