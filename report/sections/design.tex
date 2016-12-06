@@ -11,10 +11,14 @@ challenges previously mentioned.
 
 \subsection{Topography}
 
-As shown in figure TODO\todo{missing ref}, the system is made up of
+As shown in figure~\ref{fig:topo}, the system is made up of
 a central server with an arbitrary number of connected clients.
 
-TODO fig
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.5]{figures/topography.png}
+  \caption{\label{fig:topo} Server - Client topography}
+\end{figure}
 
 
 \subsection{Cryptography}
@@ -22,12 +26,12 @@ TODO fig
 To solve the issues of confidentiality and integrity we will utilize
 cryptography, including both symmetric and asymmetric algorithms.
 
-When two clients connect to the server, as shown in the figure
-above\todo{is the figure above?}, these does not necessarily have any
-knowledge of each other, yet want to have full confidentiality in
-their dialogue. We can solve this with by exchanging public keys,
-where both send each other their public keys. These can then be used
-by each client to send encrypted messages to the other.
+When two clients connect to the server, as shown in the figure above,
+these does not necessarily have any knowledge of each other, yet want
+to have full confidentiality in their dialogue. We can solve this with
+by exchanging public keys, where both send each other their public
+keys. These can then be used by each client to send encrypted messages
+to the other.
 
 One could ask if this limits the conversation to only two
 participants. Using solely asymmetric cryptography this would be
