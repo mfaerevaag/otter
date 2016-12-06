@@ -10,19 +10,95 @@ compiler (v1.13.0) and {\tt cargo} build system (v0.14.0).
 The application contains two binaries; one for the server and one for
 the client, named as such.
 
-Firstly, from the root directory, start the server with {\tt cargo run
-  --bin server}. The output should look like the following
+To run build and run the application, first open a terminal in the
+root directory of the project.
+
+We start with the server. With {\tt cargo} we can compile all
+dependencies and run the server with {\tt cargo run --bin server}. The
+output should look like the following
 \begin{verbatim}
-   Compiling otter-ws-rs v0.1.0 (file:///home/markus/dev/code/fts/otter-ws-rs)
-    Finished debug [unoptimized + debuginfo] target(s) in 3.38 secs
+cargo run --bin server
+   Compiling slab v0.1.3
+   Compiling cfg-if v0.1.0
+   Compiling bitflags v0.4.0
+   Compiling sha1 v0.2.0
+   Compiling lazy_static v0.2.2
+   Compiling matches v0.1.3
+   Compiling bytes v0.3.0
+   Compiling unicode-bidi v0.2.3
+   Compiling winapi v0.2.8
+   Compiling libc v0.2.17
+   Compiling winapi-build v0.1.1
+   Compiling net2 v0.2.26
+   Compiling httparse v1.1.2
+   Compiling log v0.3.6
+   Compiling nix v0.5.1
+   Compiling rustc-serialize v0.3.21
+   Compiling unicode-normalization v0.1.2
+   Compiling kernel32-sys v0.2.2
+   Compiling openssl v0.9.1
+   Compiling pkg-config v0.3.8
+   Compiling idna v0.1.0
+   Compiling openssl-sys v0.9.1
+   Compiling url v1.2.3
+   Compiling ws2_32-sys v0.2.1
+   Compiling rand v0.3.14
+   Compiling bitflags v0.7.0
+   Compiling miow v0.1.3
+   Compiling time v0.1.35
+   Compiling mio v0.5.1
+   Compiling ws v0.5.3
+   Compiling secret-chat v0.1.0 (file:///home/markus/dev/code/fts/otter-ws-rs)
+    Finished debug [unoptimized + debuginfo] target(s) in 25.59 secs
      Running `target/debug/server`
+adding room 'example-room'
 listening to 127.0.0.1:10000...
 \end{verbatim}
 
-Now, a client can be started from the directory with {\tt cargo run
-  --bin client}. The output should look like the following
+If everything works as expected we try to connect a client by running
+{\tt cargo run --bin client} in a new terminal, also from the root
+directory. The output should look like the following
 \begin{verbatim}
-TODO
+cargo run --bin client
+   Compiling secret-chat v0.1.0 (file:///home/markus/dev/code/fts/otter-ws-rs)
+    Finished debug [unoptimized + debuginfo] target(s) in 2.76 secs
+     Running `target/debug/client`
+connecting to ws://127.0.0.1:10000...
+welcome, anon1
+>
 \end{verbatim}
 
-TODO
+The last indicates that the client has been given the name ``anon1''
+and is waiting for input. Go ahead and open yet another terminal and
+start a new client. This client will most likely be given the name
+``anon2'', depending if you have followed these instructions. If you
+would like to list all clients, try typing ``/list'' and pressing
+enter, in one of the clients. The server should list all clients and
+rooms on the server. Notice the server logging the activity.
+
+Now, lets demonstrate the client writing two each other. From the
+any of the clients, write ``/msg anonX this is a very secret
+message'', where $X$ is the number of the other client, as such:
+\begin{verbatim}
+[...]
+connecting to ws://127.0.0.1:10000...
+welcome, anon1
+<anon2> [RSA2048] this is a very secret message
+>
+\end{verbatim}
+
+The message should be received by the other client. Notice how in the
+terminal where the server is running, that every message is encrypted
+and unreadable.
+\begin{verbatim}
+[...]
+listening to 127.0.0.1:10000...
+adding socket 'anon1'
+anon1: new conn
+adding socket 'anon2'
+anon2: new conn
+anon2: got '/list'.
+parsed to: List
+anon2: got '/msg anon1 Ke5IzXPIGEzaF2m7SVnC/ysQUjS0dp1qtygN+ALoHV8KTJNCeajUfBXMkJrOEwVCqy1ebka0wUaPgLW8IeXYIBEFEGLfUpAVymSll7EO2GGpXs5ibwDNqbbe+RgEM1UD3ZoIsF2H8rELwOkQT/C8uSbhYr15+7WWzJmvKqyF2ueoVx48D2a8ckqxbRTWf+qTuwxMU+eWNf/hMceowkVriSN0ngeDvEWUjkBpQdGm2EzVxrskL1dYnBkT7tvNRJJH7gmUDjtdIAaCAyus1AynPtSAhC0bbyg4cf3aaYo7+N5d3UoLc8R4aEsfrOmV1rbffMKqWSIdeiw4lW4Lnc8k6A=='.
+parsed to: Message("anon1", "Ke5IzXPIGEzaF2m7SVnC/ysQUjS0dp1qtygN+ALoHV8KTJNCeajUfBXMkJrOEwVCqy1ebka0wUaPgLW8IeXYIBEFEGLfUpAVymSll7EO2GGpXs5ibwDNqbbe+RgEM1UD3ZoIsF2H8rELwOkQT/C8uSbhYr15+7WWzJmvKqyF2ueoVx48D2a8ckqxbRTWf+qTuwxMU+eWNf/hMceowkVriSN0ngeDvEWUjkBpQdGm2EzVxrskL1dYnBkT7tvNRJJH7gmUDjtdIAaCAyus1AynPtSAhC0bbyg4cf3aaYo7+N5d3UoLc8R4aEsfrOmV1rbffMKqWSIdeiw4lW4Lnc8k6A==")
+\end{verbatim}
