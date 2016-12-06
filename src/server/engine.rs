@@ -35,7 +35,8 @@ impl Engine {
             }).unwrap();
         });
 
-        self.state.clone().new_room("asdf");
+        // add an empty example room
+        let _ = self.state.clone().new_room("example-room");
 
         let _ = server.join();
     }

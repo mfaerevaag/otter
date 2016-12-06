@@ -1,5 +1,5 @@
 [package]
-name = "otter-ws-rs"
+name = "secret-chat"
 version = "0.1.0"
 authors = ["Markus Faerevaag <m@frv.ag>"]
 

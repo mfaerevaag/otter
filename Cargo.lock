@@ -1,5 +1,5 @@
 [root]
-name = "otter-ws-rs"
+name = "secret-chat"
 version = "0.1.0"
 dependencies = [
  "openssl 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
